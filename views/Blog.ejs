@@ -10,7 +10,13 @@
 </head>
 
 <body>
-    <h1>Single-Post</h1>
+    <h1>
+        <%= blog.title %>
+    </h1>
+    <p>
+        <%= blog.body %>
+    </p>
+    <a href="/blog/<%= blog.id %>/edit">Edit ur blog</a>
 </body>
 
 </html>
