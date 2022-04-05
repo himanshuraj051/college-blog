@@ -47,22 +47,6 @@ app.get('/blog/:id', (req, res) => {
     res.render('Blog')
 })
 
-const addSlug = url => {
-    const slugs = { 'A': 'a' };
-    Object.keys(slugs).map((key) => {
-        if (url.match(new RegExp(key))) {
-            // console.log(url, slug);
-            url = url.replace(key, slugs[key])
-            return;
-        };
-    })
-
-    return url;
-}
-
-console.log(addSlug('/A/fdvnjn'));
-console.log(addSlug('/B-C/vjfdn/cdkc'));
-
 app.listen(3001, () => {
     console.log("listening on port 3001")
 })
