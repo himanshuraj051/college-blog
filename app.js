@@ -1,5 +1,4 @@
 const express = require('express');
-const dummy = require('./dummyData').data;
 const { default: mongoose } = require('mongoose');
 const bodyParser = require("body-parser");
 const req = require('express/lib/request');
@@ -13,11 +12,17 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-// mongoose.connect('mongodb://localhost:27017/blog').then(() => {
-//     console.log("connect to database!");
-// })
+mongoose.connect('mongodb://localhost:27017/blog').then(() => {
+    console.log("connected to database!");
+})
 
-let data = dummy;
+let blogSchema = new mongoose.Schema({
+    title: String,
+    body: String,
+    created: { type: Date, default: Date.now }
+})
+
+let Blog = mongoose.model('Blog', blogSchema);
 
 //home
 app.get('/', (req, res) => {
@@ -25,9 +30,13 @@ app.get('/', (req, res) => {
 });
 
 //blog-list
-app.get('/blog', (req, res) => {
-    console.log(data);
-    res.render('index', { blog: data });
+app.get('/blog', async(req, res) => {
+    try {
+        let blogs = await Blog.find({})
+        res.render('index', { blog: blogs });
+    } catch {
+
+    }
 });
 
 //new-blog-form
@@ -36,58 +45,46 @@ app.get('/blog/new', (req, res) => {
 });
 
 //add-new-blog
-app.post('/blog', (req, res) => {
-    console.log(req.body);
-    data.push({ title: req.body.title, body: req.body.body });
-    res.redirect('/blog');
+app.post('/blog', async(req, res) => {
+    try {
+        await Blog.create(req.body)
+        res.redirect('/blog');
+    } catch {
+        res.redirect('/blog');
+    }
 });
 
 //view single-blog
-app.get('/blog/:id', (req, res) => {
-    let id = req.params.id;
-    let filteredData = data.filter((blog) => blog.id === id);
-    // console.log(filteredData);
-    res.render('Blog', { blog: filteredData[0] });
-    res.status(200).send();
-})
+app.get('/blog/:id', async(req, res) => {
+    try {
+        let id = req.params.id;
+        let filteredData = await Blog.findById(id)
 
-//update blog form
-app.get('/blog/:id/edit', (req, res) => {
-    let id = req.params.id;
-    let filteredData = data.filter((blog) => blog.id === id);
-    res.render('updateBlogForm', { blog: filteredData[0] });
-})
-
-//update post 
-app.post('/blog/:id', (req, res) => {
-    let { title, body } = req.body;
-    const id = req.params.id;
-    data.map(blog => {
-        if (blog.id === id) {
-            blog.title = title;
-            blog.body = body;
-
-            return;
-        }
-    })
-
-    res.redirect(`/blog/${id}`)
-})
-
-let arr = [1, 2, 3, 4, 5, 6];
-arr.map((value, index) => {
-    console.log(value, index);
-})
-
-let newArr = arr.filter((value, index) => {
-    if (value > 3) {
-        return false;
-    } else {
-        return true;
+        res.render('Blog', { blog: filteredData });
+        res.status(200).send();
+    } catch {
+        res.redirect('/blog');
     }
 })
 
-console.log(newArr);
+//update blog form
+app.get('/blog/:id/edit', async(req, res) => {
+    let id = req.params.id;
+    let filteredData = await Blog.findById(id)
+    res.render('updateBlogForm', { blog: filteredData });
+})
+
+//update post 
+app.post('/blog/:id', async(req, res) => {
+    try {
+        const id = req.params.id;
+        console.log(req.body, 'req.body.....')
+        await Blog.findByIdAndUpdate(id, { body: req.body.body });
+        res.redirect(`/blog/${id}`)
+    } catch {
+        console.log("error")
+    }
+})
 
 app.listen(3001, () => {
     console.log("listening on port 3001")
