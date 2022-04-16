@@ -16,7 +16,20 @@
     <p>
         <%= blog.body %>
     </p>
-    <a href="/blog/<%= blog._id %>/edit">Edit ur blog</a>
+
+    <a href="/blog/<%= blog._id %>/edit" id="edit">Edit ur blog</a>
+
+    <script>
+        let info = JSON.parse(localStorage.getItem('info'));
+        let anchorTag = document.getElementById('edit');
+
+        let token;
+        if (!info) token = 'TOKEN_NOT_FOUND';
+        else token = info.token;
+
+        anchorTag.href = "/blog/<%= blog._id %>/edit/" + token;
+    </script>
+
 </body>
 
 </html>

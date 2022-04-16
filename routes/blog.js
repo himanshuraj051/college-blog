@@ -9,11 +9,12 @@ const {
     updateBlogForm,
     updateBlog
 } = require('../controllers/blogController');
+const { authenticateToken } = require('../controllers/userController');
 
 blogRouter.get('/', getBlogs);
 blogRouter.get('/new', createBlogForm);
 blogRouter.get('/:id', getBlog);
-blogRouter.get('/:id/edit', updateBlogForm);
+blogRouter.get('/:id/edit/:token', authenticateToken, updateBlogForm);
 
 blogRouter.post('/', createBlog);
 blogRouter.post('/:id', updateBlog);

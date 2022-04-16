@@ -3,6 +3,11 @@ const Blog = require('../models/blog');
 module.exports.getBlogs = async(req, res) => {
     try {
         let blogs = await Blog.find({})
+
+        console.log("blog****************", req.session.token);
+
+        res.locals.token = req.session.token;
+
         res.render('index', { blog: blogs });
     } catch {
 
@@ -27,7 +32,14 @@ module.exports.createBlogForm = (req, res) => {
 module.exports.updateBlogForm = async(req, res) => {
     try {
         let id = req.params.id;
+        let token = req.params.token;
+
+        // console.log(token, 'blogcontroller*************')
+
         let filteredData = await Blog.findById(id)
+
+        req.token = token;
+
         res.render('updateBlogForm', { blog: filteredData });
     } catch (err) {
         console.log(err);

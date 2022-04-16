@@ -10,9 +10,6 @@
 </head>
 
 <body>
-    <div class="container">
-        fvfsvds
-    </div>
     <h1>Hello world</h1>
     <ul>
         <% blog.forEach((val) => { %>
@@ -22,6 +19,15 @@
             </li>
             <% }) %>
     </ul>
+
+    <% if(token) { %>
+        <script>
+            let token = <%- JSON.stringify(token) %>
+            localStorage.setItem('info', JSON.stringify({
+                'token': token
+            }));
+        </script>
+        <% } %>
 </body>
 
 </html>
