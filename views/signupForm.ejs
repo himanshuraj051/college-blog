@@ -1,21 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include('../partials/header'); -%>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
-</head>
+    <body style="background-image: url('/bgimg.webp'); background-size: cover; background-position: center;">
+        <section class=" gradient-custom">
+            <div class="container p-2 h-75">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                        <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                            <div class="card-body p-5 text-center">
 
-<body>
-    <form action="/user/signup" method="post">
-        <input type="text" name="fullName" placeholder="full name">
-        <input type="email" name="email" placeholder="email">
-        <input type="text" name="department" placeholder="department">
-        <input type="password" name="password" placeholder="pasword">
-        <button type="submit">SIGN UP</button>
-    </form>
-</body>
+                                <div class="mb-md-5 mt-md-4 pb-5">
 
-</html>
+                                    <h2 class="fw-bold mb-2 text-uppercase">Register</h2>
+                                    <p class="text-white-50 mb-5">Please enter your personal information!</p>
+                                    <form action="/user/signup" method="post">
+                                        <div class="form-outline form-white mb-4">
+                                            <input type="text" id="typefullNameX" class="form-control form-control-lg" name="fullName" />
+                                            <label class="form-label" for="typeEmailX">Full Name</label>
+                                        </div>
+
+                                        <div class="form-outline form-white mb-4">
+                                            <input type="text" id="typedepartmentX" class="form-control form-control-lg" name="department" />
+                                            <label class=" form-label " for="typeEmailX ">Department</label>
+                                        </div>
+
+                                        <div class="form-outline form-white mb-4 ">
+                                            <input type="email " id="typeEmailX " class="form-control form-control-lg " name="email" />
+                                            <label class="form-label " for="typeEmailX ">Email</label>
+                                        </div>
+
+                                        <div class="form-outline form-white mb-4 ">
+                                            <input type="password " id="typePasswordX " class="form-control form-control-lg " name="password" />
+                                            <label class="form-label " for="typePasswordX ">Password</label>
+                                        </div>
+
+                                        <button class="btn btn-outline-light btn-lg px-5 " type="submit ">Register</button>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+
+    </html>

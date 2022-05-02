@@ -1,4 +1,5 @@
 const { hash, genSalt, compare } = require('bcrypt');
+const { render } = require('express/lib/response');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
@@ -16,6 +17,7 @@ module.exports.createUser = async(req, res) => {
         let { fullName, email, password, department } = req.body;
 
         // const salt = await genSalt();
+        console.log("here", req.body.password);
         const hashedPassword = await hash(password, 10);
         password = hashedPassword;
 
@@ -42,6 +44,7 @@ module.exports.authenticateUser = async(req, res) => {
 
         if (await compare(password, user.password)) {
             let loggedInUser = {
+                id: user._id,
                 email,
                 fullName: user.fullName,
                 department: user.department
@@ -50,6 +53,7 @@ module.exports.authenticateUser = async(req, res) => {
             console.log(token);
 
             req.session.token = token;
+            req.session.username = user.fullName;
 
             return res.redirect('/blog');
         }
@@ -70,6 +74,8 @@ module.exports.authenticateToken = async(req, res, next) => {
         let user = await jwt.verify(token, 'secret_key');
         console.log(user);
 
+        res.locals.username = user.fullName;
+
         if (!user) {
             return res.redirect('/user/login');
         }
@@ -79,4 +85,8 @@ module.exports.authenticateToken = async(req, res, next) => {
     } catch (err) {
         res.redirect('/user/login');
     }
+}
+
+module.exports.logout = (req, res) => {
+    render.render('/user/login');
 }

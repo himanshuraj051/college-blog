@@ -1,4 +1,7 @@
 const Blog = require('../models/blog');
+const Upvote = require('../models/upvote');
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 module.exports.getBlogs = async(req, res) => {
     try {
@@ -7,6 +10,11 @@ module.exports.getBlogs = async(req, res) => {
         console.log("blog****************", req.session.token);
 
         res.locals.token = req.session.token;
+        res.locals.fullName = req.session.username;
+        console.log(req.session.username, 'fullname');
+
+        let resp = await Upvote.find().populate('post').exec();
+        console.log(resp);
 
         res.render('index', { blog: blogs });
     } catch {
@@ -48,7 +56,14 @@ module.exports.updateBlogForm = async(req, res) => {
 
 module.exports.createBlog = async(req, res) => {
     try {
-        await Blog.create(req.body)
+        console.log(req.user, 'user************')
+        let blog = await Blog.create({...req.body, author: req.user.id })
+        console.log(blog);
+        let upvote = new Upvote({
+            post: blog._id
+        })
+
+        upvote.save();
         res.redirect('/blog');
     } catch (err) {
         console.log(err)
@@ -62,5 +77,35 @@ module.exports.updateBlog = async(req, res) => {
         res.redirect(`/blog/${id}`)
     } catch {
         console.log("error")
+    }
+}
+module.exports.updateUpvote = async(req, res) => {
+    try {
+        let user = req.user.id;
+        let postId = req.params.id;
+
+        let post = await Upvote.findOne({ post: postId });
+        let upvotes = [...post.upvotes];
+
+        let alreadyExists = false;
+        upvotes.find((ele) => {
+            ele.author == user;
+            alreadyExists = true;
+        })
+        if (alreadyExists)
+            upvotes = upvotes.filter((ele) => ele.author != user);
+        else
+            upvotes.push({ author: user });
+
+        await Upvote.findOneAndUpdate({ post: postId }, { upvotes: upvotes });
+
+        console.log(upvotes, 'upvotes');
+
+        res.json({
+            count: upvotes.length
+        })
+
+    } catch (err) {
+        console.log(err);
     }
 }

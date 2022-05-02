@@ -7,16 +7,19 @@ const {
     createBlog,
     getBlog,
     updateBlogForm,
-    updateBlog
+    updateBlog,
+    updateUpvote
 } = require('../controllers/blogController');
 const { authenticateToken } = require('../controllers/userController');
 
 blogRouter.get('/', getBlogs);
 blogRouter.get('/new', createBlogForm);
+blogRouter.get('/upvote/:id/:token', authenticateToken, updateUpvote);
 blogRouter.get('/:id', getBlog);
 blogRouter.get('/:id/edit/:token', authenticateToken, updateBlogForm);
 
-blogRouter.post('/', createBlog);
+
+blogRouter.post('/', authenticateToken, createBlog);
 blogRouter.post('/:id', updateBlog);
 
 module.exports = blogRouter;

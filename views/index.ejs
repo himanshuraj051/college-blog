@@ -1,35 +1,125 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include('../partials/header'); -%>
+    <style>
+        .circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: blue;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+    </style>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/bootstrap.min.css">
-    <title>Document</title>
-</head>
+    <script>
+        let info = JSON.parse(localStorage.getItem('info'));
+        let anchorTag = document.getElementById('edit');
 
-<body>
-    <h1>Hello world</h1>
-    <ul>
-        <% blog.forEach((val) => { %>
-            <li>
-                <%= val.body %>
-                    <a href="/blog/<%= val.id%>">view post...</a>
-            </li>
-            <% }) %>
-    </ul>
+        var token;
+        if (!info) token = 'TOKEN_NOT_FOUND';
+        else token = info.token;
 
-    <% if(token) { %>
+
+        function loadDoc(postId) {
+
+
+            var xhttp = new XMLHttpRequest();
+            let id = document.getElementById(postId).value;
+
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    let res = JSON.parse(this.responseText);
+
+                    document.querySelectorAll(".demo")[postId].innerHTML = res.count;
+
+                    console.log(this.responseText, 'here');
+                }
+            };
+
+            console.log(token, 'js')
+            xhttp.open("GET", "http://localhost:3001/blog/upvote/" + id + "/" + token, true);
+            xhttp.send();
+        }
+    </script>
+
+    <body style="background-color: #cacaca; box-sizing: border-box;">
+        <div class="row d-flex align-items-center px-4" style="background-color: #ffffff; box-shadow: 0px 1px 4px rgb(0,0,0,0.16); height: 50px; top: 0px; position: sticky; z-index: 1;">
+            <div class="col-4">
+                <h5>College Engagement</h5>
+            </div>
+            <div class="d-flex" style="margin-left: auto;">
+                <div class="px-2">Blogs</div>
+                <div class="px-2">Notice</div>
+                <div class="px-2">Interview Experience</div>
+                <div class="px-2">
+                    <p id="profile">Profile</p>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row justify-content-center m-3">
+                <div class="col-6">
+                    <% blog.forEach((val, ind) => { %>
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div class="circle">
+                                        <div style="text-align: center;">EB</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: medium; font-weight: bold;">Briggs, Elaine</div>
+                                        <div>computer science</div>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div style="word-wrap: break-word!important;
+                            word-break: break-word!important;" class="mt-3">
+                                    <%= val.body %>
+                                </div>
+                                <a href="/blog/<%= val.id%>" class="d-flex" style="justify-content: flex-end;">
+                                    see post...
+                                </a>
+                                <hr>
+
+                                <div class="row h-100">
+                                    <input type="hidden" id="<%= ind %>" value="<%= val.id %>">
+                                    <div class="col" style="text-align: center; border-right: 1px solid grey;" onclick="loadDoc(<%=ind%>)">UPVOTE
+                                        <p class="demo"></p>
+                                    </div>
+                                    <div class="col" style="text-align: center;">DOWNVOTE</div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                </div>
+
+            </div>
+        </div>
         <script>
-            let token = <%- JSON.stringify(token) %>
-            localStorage.setItem('info', JSON.stringify({
-                'token': token
-            }));
+            info = JSON.parse(localStorage.getItem('info'));
+            if (info) {
+                document.getElementById('profile').innerHTML = info.username
+            }
         </script>
-        <% } %>
-</body>
 
-</html>
+        <% if(token) { %>
+            <script>
+                token = <%- JSON.stringify(token) %>
+                let fullName = <%- JSON.stringify(fullName) %>
+                localStorage.setItem('info', JSON.stringify({
+                    'token': token,
+                    'username': fullName,
+                }));
 
-<!-- // http://localhost:3001/blog api -->
+                console.log("Hii", fullName)
+            </script>
+            <% } %>
+    </body>
+
+    </html>
+
+    <!-- // http://localhost:3001/blog api -->
